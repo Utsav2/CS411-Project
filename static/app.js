@@ -4,7 +4,7 @@ app.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
       when('/phones', {
-        templateUrl: 'index.html'
+        templateUrl: 'templates/HTMLPage.html'
         });
   }]);
 	
