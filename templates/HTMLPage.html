@@ -7,22 +7,24 @@
         <title></title>
         <link href="{{url_for('static', filename='bootstrap.css')}}" rel="stylesheet">
     </head>
-    <body>
-        <nav class="navbar navbar-default" role="navigation" style="margin-bottom: 0px">
-            <div class="container-fluid">
+    <body style="font-family: Grasshopper">
+        <nav class="navbar navbar-default" role="navigation" style="margin-bottom: 0px; height: 80px">
+            <div class="container" style="height: 80px">
             <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header" style="height: 80px">
                     <a class="navbar-brand" href="#"><img src="{{url_for('static', filename='Image003.png')}}" style="max-height: 100%; width:  100px" alt="logo"></a>
                 </div>
-                <ul class="nav navbar-nav" style="font-family: GrassHopper" >
-                    <li class="active"><a href="#"><b>CLASS HOP</b></a></li>
-                    <li><a href="#"><b>ABOUT</b></a></li>
-                  </ul>
+                <ul class="nav navbar-nav navbar-right" style="font-family: GrassHopper; height: 79px">
+                    <li><a href="#" style="text-align: center;height: 79px;min-height: 10em;display: table-cell;vertical-align: middle; font-size: 28px"><b>ABOUT</b></a></li>
+                </ul>
             </div>
         </nav>
         <div class="col-lg-3 pull-right" style="padding-right: 0px">
-            <div class="well">
+            <div class="well" style="margin-bottom: 0px">
                 <form class="center-block" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search">
                     </div>
@@ -37,6 +39,13 @@
                     </div>
                     <button type="submit" class="btn btn-default">Submit</button>
                 </form>
+                <div class="list-group" style="margin-top: 25px" role="tablist">
+                  <a href ="#HTMLPage.html" class="list-group-item">MONDAY</a>
+                  <a href ="#HTMLPage.html" class="list-group-item">TUESDAY</a>
+                  <a href ="#HTMLPage.html" class="list-group-item">WEDNESDAY</a>
+                  <a href ="#HTMLPage.html" class="list-group-item">THURSDAY</a>
+                  <a href ="#HTMLPage.html" class="list-group-item">FRIDAY</a>
+                </div>
             </div>
         </div>
         <script src="{{url_for('static', filename='jquery-1.11.0.js')}}"></script>
