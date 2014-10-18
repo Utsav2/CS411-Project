@@ -15,6 +15,7 @@ def hello():
 
 @app.route("/admin")
 def adminAccess():
+	
     return render_template('HTMLPage.html')
 
 
