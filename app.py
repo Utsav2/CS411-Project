@@ -13,6 +13,12 @@ app.config.update(
 def hello():
     return render_template('HTMLPage.html')
 
+@app.route("/admin")
+def adminAccess():
+	
+    return render_template('HTMLPage.html')
+
+
 # launch
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
