@@ -1,1 +1,10 @@
-angular.module('cs411ProjectApp', [])
+var app = angular.module('cs411ProjectApp', ['ngRoute'])
+
+app.config(['$routeProvider',
+  function($routeProvider) {
+    $routeProvider.
+      when('/phones', {
+        templateUrl: 'index.html'
+        });
+  }]);
+	
