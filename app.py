@@ -29,7 +29,7 @@ def getCourseList():
   response = {};
   response["Course"] = "Course";
   response["Utsav"] = "Shah"
-  cursor.execute("SELECT * FROM restaurants;")
+  cursor.execute("SELECT * FROM Buildings;")
   rows = [x for x in cursor]
   cols = [x[0] for x in cursor.description]
   courses = []
