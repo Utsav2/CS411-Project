@@ -21,8 +21,41 @@ function moveToLocation(lat, lng){
 }
 
 $( "#search" ).autocomplete({
-	source: "getCourses",
+
+    source: function (request, response) {
+      $.getJSON("/getCourses?term=" + request.term, function (data) {
+
+          r = [];
+
+          duplicates = [];
+
+          var count = 0;
+
+          for(var i in data){
+
+            if(!(data[i].crn in duplicates)){
+
+              r[count] = {
+
+                label: data[i].subjnbr + ' ' + data[i].title + ' ' + data[i].crn,
+
+                value: data[i].subjnbr + ' ' + data[i].title
+
+              }
+
+              duplicates[data[i].crn] = "1"
+
+              count++;
+
+            }
+
+          }
+
+          response(r);
+      });
+  },
 	minLength: 2,
+  delay:100,
 	select: function( event, ui ) {
 
 			
