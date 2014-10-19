@@ -29,7 +29,7 @@ def getCourseList():
   
   term = request.args['term'];
 
-  SQL = "SELECT crn, title FROM sections WHERE title ILIKE '%%" + term + "%%';"
+  SQL = "SELECT crn, title, subjnbr FROM sections WHERE subjnbr LIKE '%%" + term + "%%' or title LIKE '%%" + term + "%%';"
   data = (term, )
 
   cursor.execute(SQL)
