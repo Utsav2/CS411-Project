@@ -28,7 +28,7 @@ def getCourseList():
   response = {};
   response["Course"] = "Course";
   response["Utsav"] = "Shah"
-  response = cur.execute("SELECT * FROM sections;")
+  #response = cur.execute("SELECT * FROM sections;")
   return jsonify(response)
 
 
