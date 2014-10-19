@@ -29,7 +29,16 @@ def getCourseList():
   response["Course"] = "Course";
   response["Utsav"] = "Shah"
   cur.execute("SELECT * FROM restaurants;")
-  return jsonify(response)
+  rows = [x for x in cursor]
+  cols = [x[0] for x in cursor.description]
+  courses = []
+  for row in rows:
+    course = {}
+    for prop, val in zip(cols, row):
+      course[prop] = val
+      courses.append(course)
+
+  return courses
 
 
 # launch
