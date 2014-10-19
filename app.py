@@ -38,7 +38,7 @@ def getCourseList():
       course[prop] = val
       courses.append(course)
 
-  return courses
+  json.dumps(courses)
 
 
 # launch
