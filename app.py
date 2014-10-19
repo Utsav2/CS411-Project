@@ -27,9 +27,9 @@ def adminAccess():
 @app.route("/getCourses")
 def getCourseList():	
   
-  
+  term = Request.form['term'];
 
-  cursor.execute("SELECT crn, title FROM sections;")
+  cursor.execute("SELECT crn, title FROM sections WHERE title LIKE (%s)", term + "%");
   rows = [x for x in cursor]
   cols = [x[0] for x in cursor.description]
   courses = []
