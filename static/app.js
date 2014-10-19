@@ -20,11 +20,13 @@ function moveToLocation(lat, lng){
     map.panTo(center);
 }
 
+
+
 $( "#search" ).autocomplete({
 	source: "getCourses",
 	minLength: 2,
 	select: function( event, ui ) {
-
+		
 			
 	}
 });
