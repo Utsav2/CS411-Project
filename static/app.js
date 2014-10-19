@@ -23,10 +23,31 @@ function moveToLocation(lat, lng){
 
 
 $( "#search" ).autocomplete({
-	source: "getCourses",
+	
+	source : function(request, response) {
+
+        var firstChars = $("#search").attr("value");
+
+        $.getJSON("/getCourses", {
+
+            postcodeFirstChars : firstChars
+
+        }, function(data) {
+
+            console.log(data);
+
+            response($.map(data, function (item) {
+                    return {
+                        label: item,
+                        value: item
+                    };
+                }));
+        });
+    },
+
 	minLength: 2,
 	select: function( event, ui ) {
-		
+
 			
 	}
 });
