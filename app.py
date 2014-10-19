@@ -26,10 +26,10 @@ def adminAccess():
 
 @app.route("/getCourses")
 def getCourseList():	
-  response = {};
-  response["Course"] = "Course";
-  response["Utsav"] = "Shah"
-  cursor.execute("SELECT * FROM Buildings;")
+  
+  
+
+  cursor.execute("SELECT crn, title FROM sections;")
   rows = [x for x in cursor]
   cols = [x[0] for x in cursor.description]
   courses = []
