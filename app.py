@@ -11,6 +11,8 @@ app.config.update(
 
 conn = psycopg2.connect(dbname="d8rilo7dk8mh5i", user= "ivxreaxdzurffp", password="b8iMA7KJCGaFMKIjZYhtzqywfm", host="ec2-184-73-194-196.compute-1.amazonaws.com")
 
+cur = conn.cursor()
+
 
 # controllersasdf
 @app.route("/")
@@ -26,6 +28,7 @@ def getCourseList():
   response = {};
   response["Course"] = "Course";
   response["Utsav"] = "Shah"
+  response = cur.execute("SELECT * FROM sections;")
   return jsonify(response)
 
 
