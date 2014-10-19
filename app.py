@@ -11,7 +11,7 @@ app.config.update(
 
 conn = psycopg2.connect(dbname="d8rilo7dk8mh5i", user= "ivxreaxdzurffp", password="b8iMA7KJCGaFMKIjZYhtzqywfm", host="ec2-184-73-194-196.compute-1.amazonaws.com")
 
-cur = conn.cursor()
+cursor = conn.cursor()
 
 
 # controllersasdf
@@ -28,7 +28,7 @@ def getCourseList():
   response = {};
   response["Course"] = "Course";
   response["Utsav"] = "Shah"
-  cur.execute("SELECT * FROM restaurants;")
+  cursor.execute("SELECT * FROM restaurants;")
   rows = [x for x in cursor]
   cols = [x[0] for x in cursor.description]
   courses = []
