@@ -23,6 +23,25 @@ def hello():
 @app.route("/admin")
 def adminAccess():
     return render_template('HTMLPage.html')
+    buildinput = request.form['buildinput'];
+    nameinput = request.form['nameinput'];
+    latinput = request.form['latinput'];
+    longinput = request.form['longinput'];
+
+#insert
+    SQL1 = "INSERT INTO buildings (building, buildingname, latitude, longitude) VALUES ( " + buildinput + "," + nameinput + "," + latinput + "," + longinput + ");"
+
+    cursor.execute(SQL1)
+
+#delete
+    SQL2 = "DELETE FROM buildings WHERE building = " + buildinput + ";"
+
+    cursor.execute(SQL2)
+
+#edit
+    SQL3 = "UPDATE SET buildingname = " + buildinput + ", latitude = " + latinput + ", longitude = " + longinput + " WHERE buildings = " + buildinput + ";"
+    cursor.execute(SQL3)
+
 
 @app.route("/getCourses")
 def getCourseList():	
