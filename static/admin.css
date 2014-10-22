@@ -1,0 +1,17 @@
+*{
+	background-color: #dff0d8;
+
+}
+
+h1 {
+	padding: 20px;
+
+}
+/*border #d9e9c6
+background #dff0d8
+*/
+div {
+	display : block;
+	margin-left: 30px;
+	margin-bottom : 30px;
+}
