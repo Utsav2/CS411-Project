@@ -20,28 +20,36 @@ cursor = conn.cursor()
 def hello():
     return render_template('HTMLPage.html')
 
-@app.route("/admin")
+@app.route("/admin1", methods=['POST'])
 def adminAccess():
-    return render_template('HTMLPage.html')
+
+
     buildinput = request.form['buildinput'];
     nameinput = request.form['nameinput'];
     latinput = request.form['latinput'];
     longinput = request.form['longinput'];
+    flag = request.form['flag']
 
-#insert
-    SQL1 = "INSERT INTO buildings (building, buildingname, latitude, longitude) VALUES ( " + buildinput + "," + nameinput + "," + latinput + "," + longinput + ");"
+    SQL = ''
 
-    cursor.execute(SQL1)
+    if(flag == '0'):
+      SQL = "INSERT INTO buildings (building, buildingname, latitude, longitude) VALUES ( '" + buildinput + "','" + nameinput + "','" + latinput + "','" + longinput + "');"
 
-#delete
-    SQL2 = "DELETE FROM buildings WHERE building = " + buildinput + ";"
+    elif(flag == '1'):
+      SQL = "DELETE FROM buildings WHERE building = '" + buildinput + "';"
 
-    cursor.execute(SQL2)
+    else:
+      SQL = "UPDATE SET buildingname = '" + nameinput + "', latitude = '" + latinput + "', longitude = '" + longinput + "' WHERE building = '" + buildinput + "';"
+    
+    print SQL
 
-#edit
-    SQL3 = "UPDATE SET buildingname = " + buildinput + ", latitude = " + latinput + ", longitude = " + longinput + " WHERE buildings = " + buildinput + ";"
-    cursor.execute(SQL3)
+    cursor.execute(SQL)
 
+    return jsonify("")
+
+@app.route("/admin")
+def admin():
+   return render_template('admin.html')
 
 @app.route("/getCourses")
 def getCourseList():	

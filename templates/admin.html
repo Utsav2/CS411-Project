@@ -2,22 +2,85 @@
 
 <html lang='en'>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="../static/admin.css">
+<link rel="stylesheet" href="{{url_for('static', filename='admin.css')}}">
+<script src="{{url_for('static', filename='jquery-1.11.0.js')}}"></script>
 	<head>
 		<title>ClassHopper Admin</title>
 	</head>
 	<body>
 		<h1>Add, Edit, or Delete Building Data</h1>
 		<div class="input-group">
-			<p><input name="buildinput" type="text" class="form-control" placeholder = "Building Unique ID"></input></p>
-			<p><input name="nameinput" type="text" class="form-control" placeholder = "Building Name"></input></p>
-			<p><input name="latinput" type="text" class="form-control" placeholder = "Building Latitude"></input></p>
-			<p><input name="longinput" type="text" class="form-control" placeholder = "Building Longitude"></input></p>
-		</div>	
-		<div class="btn-group">
-			<button type="button" class="btn btn-default">Add</button>
-			<button type="button" class="btn btn-default">Edit</button>
-			<button type="button" class="btn btn-default">Delete</button>
+			<p><input name="buildinput" id = "1" type="text" class="form-control" placeholder = "Building Unique ID"></input></p>
+			<p><input name="nameinput" id = "2" type="text" class="form-control" placeholder = "Building Name"></input></p>
+			<p><input name="latinput" id = "3" type="text" class="form-control" placeholder = "Building Latitude"></input></p>
+			<p><input name="longinput" id = "4" type="text" class="form-control" placeholder = "Building Longitude"></input></p>
 		</div>
+		<div class="btn-group">
+			<button type="button" class="btn btn-default" onclick = "add()">Add</button>
+			<button type="button" class="btn btn-default" onclick = "edit()">Edit</button>
+			<button type="button" class="btn btn-default" onclick = "delete1()">Delete</button>
+		</div>
+
+		<script>
+
+			function add(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 0);
+
+			}
+
+			function edit(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 2);
+
+			}
+
+			function delete1(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 1);
+			}
+
+			function myRequest(id,name,lat,lng,flag){
+
+				$.ajax({
+
+					type:'POST',
+
+					url:'/admin1',
+
+					data:{buildinput: id.value, nameinput:name.value, latinput:lat.value, longinput:lng.value, flag:flag},
+
+			        success: function () {
+			            //your success code
+
+			            alert("Success!")
+			        },
+			        error: function () {
+			            //your error code
+
+			            alert('Failure!');
+			        }
+
+				});
+
+			}
+
+
+		</script>
 
 </html>		
