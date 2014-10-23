@@ -39,7 +39,7 @@ def adminAccess():
       SQL = "DELETE FROM buildings WHERE building = '" + buildinput + "';"
 
     else:
-      SQL = "UPDATE SET buildingname = '" + nameinput + "', latitude = '" + latinput + "', longitude = '" + longinput + "' WHERE building = '" + buildinput + "';"
+      SQL = "UPDATE buildings SET building = '" + buildinput + "', buildingname = '" + nameinput + "', latitude = '" + latinput + "', longitude = '" + longinput + "' WHERE building = '" + buildinput + "';"
     
     print SQL
 
