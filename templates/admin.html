@@ -22,15 +22,43 @@
 		</div>
 		</div>
 		<div id="search" class="input-group">
-			<a><input name="searchBuilding" type="text"class="form-control" placeholder = "Building Search"></input></a>
-			<a>Enter Unique Building ID</a>
+			<input name="searchBuilding" id="5" type="text"class="form-control" placeholder = "Building Search"></input>
+			<button onclick="search()">Search</button>
+			<label>Enter Unique Building ID</label>
 		</div>		
 	</body>	
 
 		<script>
 			function search(){
-					var id = document.getElementById('5');
-					myRequest(id);
+				
+				var id = document.getElementById('5').value;
+
+				$.ajax({
+
+					type:'GET',
+
+					url:'/searchBuilding',
+
+					data:searchBuilding:id,
+
+			        success: function (data) {
+			            //your success code
+
+			            console.log(data);
+
+			            alert("Success!")
+			        },
+			        error: function () {
+			            //your error code
+
+			            alert('Failure!');
+			        }
+
+				});
+
+			}
+
+
 			}
 			function add(){
 
