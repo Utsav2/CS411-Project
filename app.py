@@ -22,6 +22,7 @@ def hello():
 
 @app.route("/admin1", methods=['POST'])
 def adminAccess():
+
     
     buildinput = request.form['buildinput'];
     nameinput = request.form['nameinput'];
@@ -46,7 +47,7 @@ def adminAccess():
     conn.commit()
 
     return jsonify("")
-    
+      
 @app.route("/admin")
 def admin():
    return render_template('admin.html')
