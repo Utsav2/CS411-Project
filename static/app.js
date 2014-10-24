@@ -21,7 +21,7 @@ function initialize() {
     
     var mapOptions = {
       center: { lat: 40.1150, lng: -88.2728},
-      zoom: 8
+      zoom: 16
     };
 
 	map = new google.maps.Map(document.getElementById('map-canvas'),
@@ -89,15 +89,6 @@ function putOnMap(data){
 
 		for(var i in result){
 
-			if(result.subjnbr in alreadyAddedCourse){
-
-				continue;
-			}
-
-			alreadyAddedCourse[result.subjnbr] = "1"; 
-
-			console.log(result[i]);
-
 			if(result[i].m != null){
 				days['m'].push(result[i]);
 			}
@@ -128,15 +119,46 @@ function renderMap(day){
 
 		var location = new google.maps.LatLng((days[day])[i].latitude, (days[day])[i].longitude);
 
+		var tuple = (days[day])[i];
+
 		var marker = new google.maps.Marker({
+
 			position: location,
+			title: days[day].title,
 			map: map
+
 		});
 
-		marker.setMap(map);
+		//console.log(tuple);
+
+		var content_string = '<div style="width:200px; height:100px"><h3>' + tuple.subjnbr + '</h3>' + 
+							 '<p>' + tuple.title + 
+							 '<p><span>' + tuple.begintime +  
+							 ' - ' + tuple.endtime + '</span></div>';
+
+
+
+		var infowindow = new google.maps.InfoWindow({
+
+     		content: content_string
+
+  		});
+
+  		google.maps.event.addListener(marker, 'click', function() {
+
+    		infowindow.open(map,marker);
+
+  		});
+
+  		marker.setMap(map);
 
 		currentMarkers.push(marker);
+
+		map.panTo(location);
 	}
+
+
+
 
 }
 function clearMarkers(){
