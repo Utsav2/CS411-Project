@@ -10,15 +10,15 @@
 	<body>
 		<h1>Add, Edit, or Delete Building Data</h1>
 		<div id="input" class="input-group">
-			<p><input name="buildinput" type="text" class="form-control" placeholder = "Building Unique ID"></input></p>
-			<p><input name="nameinput" type="text" class="form-control" placeholder = "Building Name"></input></p>
-			<p><input name="latinput" type="text" class="form-control" placeholder = "Building Latitude"></input></p>
-			<p><input name="longinput" type="text" class="form-control" placeholder = "Building Longitude"></input></p>
+			<p><input name="buildinput" type="text" class="form-control" id ='1' placeholder = "Building Unique ID"></input></p>
+			<p><input name="nameinput" type="text" class="form-control" id = '2' placeholder = "Building Name"></input></p>
+			<p><input name="latinput" type="text" class="form-control" id = '3' placeholder = "Building Latitude"></input></p>
+			<p><input name="longinput" type="text" class="form-control" id = '4' placeholder = "Building Longitude"></input></p>
 		</div>	
 		<div id="buttons" class="btn-group">
-			<button type="button" class="btn btn-default">Add</button>
-			<button type="button" class="btn btn-default">Edit</button>
-			<button type="button" class="btn btn-default">Delete</button>
+			<button type="button" onclick ="add()" class="btn btn-default">Add</button>
+			<button type="button" onclick = "edit()" class="btn btn-default">Edit</button>
+			<button type="button" onclick = "delete1()" class="btn btn-default">Delete</button>
 		</div>
 		</div>
 		<div id="search" class="input-group">
@@ -37,9 +37,7 @@
 
 					type:'GET',
 
-					url:'/searchBuilding',
-
-					data:searchBuilding:id,
+					url:'/searchBuildings?building='+id,
 
 			        success: function (data) {
 			            //your success code

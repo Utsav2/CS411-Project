@@ -20,9 +20,25 @@ cursor = conn.cursor()
 def hello():
     return render_template('HTMLPage.html')
 
+@app.route("/searchBuildings", methods=['GET'])
+def adminBuildSearch():
+  
+    searchBuild = request.args['building'];
+    SQL = "SELECT * FROM buildings WHERE building = " + searchBuild + ";"
+    cursor.execute(SQL)
+    rows = [x for x in cursor]
+    cols = [x[0] for x in cursor.description]
+    courses = []
+    for row in rows:
+      course = {}
+      for prop, val in zip(cols, row):
+        course[prop] = val
+        courses.append(course)
+
+    return json.dumps(courses)
+
 @app.route("/admin1", methods=['POST'])
 def adminAccess():
-
     
     buildinput = request.form['buildinput'];
     nameinput = request.form['nameinput'];
