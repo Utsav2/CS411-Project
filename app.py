@@ -57,8 +57,6 @@ def adminAccess():
     else:
       cursor.execute("UPDATE buildings SET building = '" + buildinput + "', buildingname = '" + nameinput + "', latitude = '" + latinput + "', longitude = '" + longinput + "' WHERE building = '" + buildinput + "';")
     
-    print SQL
-
     #cursor.execute(SQL)
     conn.commit()
 
@@ -73,7 +71,7 @@ def getCourseList():
   
   term = request.args['term'];
 
-  SQL = "SELECT crn, title, subjnbr FROM sections WHERE subjnbr LIKE '%%" + term + "%%' or title LIKE '%%" + term + "%%';"
+  SQL = "SELECT crn, title, subjnbr FROM sections WHERE subjnbr LIKE '%%" + term + "%%' or title LIKE '%%" + term + "%%' or crn LIKE '%%" + term + "%%' ;"
   data = (term, )
 
   cursor.execute(SQL)
