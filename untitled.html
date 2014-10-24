@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="../static/admin.css">
+<script src="{{url_for('static', filename='jquery-1.11.0.js')}}"></script>
+	<head>
+		<title>ClassHopper Admin</title>
+	</head>
+	<body>
+		<h1>Add, Edit, or Delete Building Data</h1>
+		<div id="input" class="input-group">
+			<p><input name="buildinput" type="text" class="form-control" placeholder = "Building Unique ID"></input></p>
+			<p><input name="nameinput" type="text" class="form-control" placeholder = "Building Name"></input></p>
+			<p><input name="latinput" type="text" class="form-control" placeholder = "Building Latitude"></input></p>
+			<p><input name="longinput" type="text" class="form-control" placeholder = "Building Longitude"></input></p>
+		</div>	
+		<div id="buttons" class="btn-group">
+			<button type="button" class="btn btn-default">Add</button>
+			<button type="button" class="btn btn-default">Edit</button>
+			<button type="button" class="btn btn-default">Delete</button>
+		</div>
+		</div>
+		<div id="search" class="input-group">
+			<a><input name="searchBuilding" type="text"class="form-control" placeholder = "Building Search"></input></a>
+			<a>Enter Unique Building ID</a>
+		</div>		
+	</body>	
+
+		<script>
+			function search(){
+					var id = document.getElementById('5');
+					myRequest(id);
+			}
+			function add(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 0);
+
+			}
+
+			function edit(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 2);
+
+			}
+
+			function delete1(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 1);
+			}
+
+			function myRequest(id,name,lat,lng,flag){
+
+				$.ajax({
+
+					type:'POST',
+
+					url:'/admin1',
+
+					data:{buildinput: id.value, nameinput:name.value, latinput:lat.value, longinput:lng.value, flag:flag},
+
+			        success: function () {
+			            //your success code
+
+			            alert("Success!")
+			        },
+			        error: function () {
+			            //your error code
+
+			            alert('Failure!');
+			        }
+
+				});
+
+			}
+
+
+		</script>
+
+</html>	
