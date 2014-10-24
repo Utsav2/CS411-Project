@@ -1,17 +1,42 @@
+/*
+border #d9e9c6
+background #dff0d8
+*/
+
 *{
+	font-family: GrassHopper;
 	background-color: #dff0d8;
+
 
 }
 
 h1 {
+
+	font-family: GrassHopper;
+	font-style: bold;
 	padding: 20px;
 
 }
-/*border #d9e9c6
-background #dff0d8
-*/
-div {
-	display : block;
+
+#input {
+	margin-top : 30px;
 	margin-left: 30px;
-	margin-bottom : 30px;
+	margin-bottom: 30px;
 }
+
+#buttons {
+	margin-left: 30px;
+	margin-bottom: 30px;
+}
+
+#search {
+	margin-left: 30px;
+	margin-bottom: 30px;
+	background-color: #ffffff;
+}
+
+
+
+
+
+

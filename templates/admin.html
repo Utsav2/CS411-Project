@@ -9,6 +9,18 @@
 	</head>
 	<body>
 		<h1>Add, Edit, or Delete Building Data</h1>
+<<<<<<< HEAD
+		<div id="input" class="input-group">
+			<p><input name="buildinput" type="text" class="form-control" placeholder = "Building Unique ID"></input></p>
+			<p><input name="nameinput" type="text" class="form-control" placeholder = "Building Name"></input></p>
+			<p><input name="latinput" type="text" class="form-control" placeholder = "Building Latitude"></input></p>
+			<p><input name="longinput" type="text" class="form-control" placeholder = "Building Longitude"></input></p>
+		</div>	
+		<div id="buttons" class="btn-group">
+			<button type="button" class="btn btn-default">Add</button>
+			<button type="button" class="btn btn-default">Edit</button>
+			<button type="button" class="btn btn-default">Delete</button>
+=======
 		<div class="input-group">
 			<p><input name="buildinput" id = "1" type="text" class="form-control" placeholder = "Building Unique ID"></input></p>
 			<p><input name="nameinput" id = "2" type="text" class="form-control" placeholder = "Building Name"></input></p>
@@ -19,10 +31,19 @@
 			<button type="button" class="btn btn-default" onclick = "add()">Add</button>
 			<button type="button" class="btn btn-default" onclick = "edit()">Edit</button>
 			<button type="button" class="btn btn-default" onclick = "delete1()">Delete</button>
+ 9a1219eda0f391df42345b6b0fab840a50369f46 >>>>>>>
 		</div>
+		<div id="search" class="input-group">
+			<a><input name="searchBuilding" type="text"class="form-control" placeholder = "Building Search"></input></a>
+			<a>Enter Unique Building ID</a>
+		</div>	
+	</body>	
 
 		<script>
-
+			function search(){
+					var id = document.getElementById('5');
+					myRequest(id);
+			}
 			function add(){
 
 				var id = document.getElementById('1');
