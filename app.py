@@ -2,6 +2,7 @@ import os
 import json
 from flask import Flask, render_template, url_for, jsonify, request
 import psycopg2
+import calendar, datetime
 
 # initialization
 app = Flask(__name__)
@@ -14,8 +15,7 @@ conn = psycopg2.connect(dbname="d8rilo7dk8mh5i", user= "ivxreaxdzurffp", passwor
 
 cursor = conn.cursor()
 
-
-# controllersasdf
+# controllers
 @app.route("/")
 def hello():
     return render_template('HTMLPage.html')
@@ -86,6 +86,28 @@ def getCourseList():
 
   return json.dumps(courses)
 
+@app.route("/getCoursesWithDays")
+def getCourseListWithDays():  
+  
+  term = request.args['term'];
+
+  SQL = "SELECT m, t, w, h, f, begintime, endtime, crn, subjnbr, title, latitude, longitude FROM sections, buildings WHERE crn = '" + term + "' AND sections.building = buildings.building;"
+
+  cursor.execute(SQL)
+  rows = [x for x in cursor]
+  cols = [x[0] for x in cursor.description]
+  courses = []
+  for row in rows:
+    course = {}
+    for prop, val in zip(cols, row):
+      if type(val) is datetime.datetime or type(val) is datetime.time:
+        course[prop] = val.isoformat()
+        continue
+      else:
+        course[prop] = val
+        courses.append(course)
+
+  return json.dumps(courses)
 
 # launch
 if __name__ == "__main__":
