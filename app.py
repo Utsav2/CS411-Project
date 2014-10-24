@@ -24,7 +24,8 @@ def hello():
 def adminBuildSearch():
   
     searchBuild = request.args['building'];
-    SQL = "SELECT * FROM buildings WHERE building = '" + searchBuild + "';"
+    SQL = "SELECT * FROM buildings WHERE building LIKE '%%" + searchBuild + "%%' or buildingname LIKE '%%" + searchBuild + "%%' or latitude LIKE '%%" + searchBuild + "%%' or longitude LIKE '%%" + searchBuild + "%%';"
+    
     cursor.execute(SQL)
     rows = [x for x in cursor]
     cols = [x[0] for x in cursor.description]
