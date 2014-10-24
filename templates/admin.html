@@ -25,7 +25,29 @@
 			<input name="searchBuilding" id="5" type="text"class="form-control" placeholder = "Building Search"></input>
 			<button onclick="search()">Search</button>
 			<label>Enter Unique Building ID</label>
-		</div>		
+		</div>	
+
+		<table class="table">
+			<thead>
+				<tr>
+					<td>
+						Building ID
+					</td>
+					<td>
+						Building Name
+					</td>
+					<td>
+						Latitude
+					</td>
+					<td>
+						Longitude
+					</td>
+				</tr>
+			</thead>
+			<tbody id = "searchResults">
+			</tbody>
+		</table>
+
 	</body>	
 
 		<script>
@@ -42,7 +64,7 @@
 			        success: function (data) {
 			            //your success code
 
-			            console.log(data);
+			           renderSearchResults(data);
 
 			            alert("Success!")
 			        },
@@ -55,8 +77,6 @@
 				});
 
 			}
-
-
 			
 			function add(){
 
@@ -112,6 +132,32 @@
 			        }
 
 				});
+
+			}
+
+			function renderSearchResults(data){
+
+				$('#searchResults').empty();
+
+				var ids = [];
+
+				data = JSON.parse(data);
+
+				for (var i in data){
+
+					console.log(data[i]);
+
+					if(data[i].building in ids){
+						continue;
+					}
+
+
+					ids[data[i].building] = "1";
+
+					$('#searchResults').append('<tr> <td>'+data[i].building+'</td><td>' + data[i].buildingname + '</td><td>' + data[i].longitude + '</td><td>' + data[i].latitude + '</td></tr>');
+
+				}
+
 
 			}
 
