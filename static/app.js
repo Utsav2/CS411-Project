@@ -129,8 +129,6 @@ function renderMap(day){
 
 		});
 
-		//console.log(tuple);
-
 		var content_string = '<div style="width:200px; height:100px"><h3>' + tuple.subjnbr + '</h3>' + 
 							 '<p>' + tuple.title + 
 							 '<p><span>' + tuple.begintime +  
