@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="../static/admin.css">
+<script src="{{url_for('static', filename='jquery-1.11.0.js')}}"></script>
+	<head>
+		<title>ClassHopper Admin</title>
+	</head>
+	<body>
+		<h1>Add, Edit, or Delete Building Data</h1>
+		<div id="input" class="input-group">
+			<p><input name="buildinput" type="text" class="form-control" id ='1' placeholder = "Building Unique ID"></input></p>
+			<p><input name="nameinput" type="text" class="form-control" id = '2' placeholder = "Building Name"></input></p>
+			<p><input name="latinput" type="text" class="form-control" id = '3' placeholder = "Building Latitude"></input></p>
+			<p><input name="longinput" type="text" class="form-control" id = '4' placeholder = "Building Longitude"></input></p>
+		</div>	
+		<div id="buttons" class="btn-group">
+			<button type="button" onclick ="add()" class="btn btn-default">Add</button>
+			<button type="button" onclick = "edit()" class="btn btn-default">Edit</button>
+			<button type="button" onclick = "delete1()" class="btn btn-default">Delete</button>
+		</div>
+		</div>
+		<div id="search" class="input-group">
+			<input name="searchBuilding" id="5" type="text"class="form-control" placeholder = "Building Search"></input>
+			<button onclick="search()">Search</button>
+			<label>Case Sensitive</label>
+		</div>	
+
+		<table class="table">
+			<thead>
+				<tr>
+					<td>
+						Building ID
+					</td>
+					<td>
+						Building Name
+					</td>
+					<td>
+						Longitude
+					</td>
+					<td>
+						Latitude
+					</td>
+				</tr>
+			</thead>
+			<tbody id = "searchResults">
+			</tbody>
+		</table>
+
+	</body>	
+
+		<script>
+			function search(){
+				
+				var id = document.getElementById('5').value;
+
+				$.ajax({
+
+					type:'GET',
+
+					url:'/searchBuildings?building='+id,
+
+			        success: function (data) {
+			            //your success code
+
+			           renderSearchResults(data);
+
+			            alert("Success!")
+			        },
+			        error: function () {
+			            //your error code
+
+			            alert('Failure!');
+			        }
+
+				});
+
+			}
+			
+			function add(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 0);
+
+			}
+
+			function edit(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 2);
+
+			}
+
+			function delete1(){
+
+				var id = document.getElementById('1');
+				var name = document.getElementById('2');
+				var lat = document.getElementById('3');
+				var lng = document.getElementById('4');
+
+				myRequest(id, name, lat, lng, 1);
+			}
+
+			function myRequest(id,name,lat,lng,flag){
+
+				$.ajax({
+
+					type:'POST',
+
+					url:'/admin1',
+
+					data:{buildinput: id.value, nameinput:name.value, latinput:lat.value, longinput:lng.value, flag:flag},
+
+			        success: function () {
+			            //your success code
+
+			            alert("Success!")
+			        },
+			        error: function () {
+			            //your error code
+
+			            alert('Failure!');
+			        }
+
+				});
+
+			}
+
+			function renderSearchResults(data){
+
+				$('#searchResults').empty();
+
+				var ids = [];
+
+				data = JSON.parse(data);
+
+				for (var i in data){
+
+					console.log(data[i]);
+
+					if(data[i].building in ids){
+						continue;
+					}
+
+
+					ids[data[i].building] = "1";
+
+					$('#searchResults').append('<tr> <td>'+data[i].building+'</td><td>' + data[i].buildingname + '</td><td>' + data[i].longitude + '</td><td>' + data[i].latitude + '</td></tr>');
+
+				}
+
+
+			}
+
+
+		</script>
+
+</html>	

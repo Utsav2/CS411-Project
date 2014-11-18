@@ -1,17 +1,114 @@
 import os
-from flask import Flask, render_template, url_for
+import json
+from flask import Flask, render_template, url_for, jsonify, request
+import psycopg2
+import calendar, datetime
 
 # initialization
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ivxreaxdzurffp:b8iMA7KJCGaFMKIjZYhtzqywfm@ec2-184-73-194-196.compute-1.amazonaws.com:5432/d8rilo7dk8mh5i'
 app.config.update(
     DEBUG = True,
 )
 
+conn = psycopg2.connect(dbname="d8rilo7dk8mh5i", user= "ivxreaxdzurffp", password="b8iMA7KJCGaFMKIjZYhtzqywfm", host="ec2-184-73-194-196.compute-1.amazonaws.com")
+
+cursor = conn.cursor()
+
 # controllers
 @app.route("/")
 def hello():
-	
-    return render_template('index.html')
+    return render_template('HTMLPage.html')
+
+@app.route("/searchBuildings", methods=['GET'])
+def adminBuildSearch():
+  
+    searchBuild = request.args['building'];
+    SQL = "SELECT * FROM buildings WHERE building LIKE '%%" + searchBuild + "%%' or buildingname LIKE '%%" + searchBuild + "%%' or latitude LIKE '%%" + searchBuild + "%%' or longitude LIKE '%%" + searchBuild + "%%';"
+    
+    cursor.execute(SQL)
+    rows = [x for x in cursor]
+    cols = [x[0] for x in cursor.description]
+    courses = []
+    for row in rows:
+      course = {}
+      for prop, val in zip(cols, row):
+        course[prop] = val
+        courses.append(course)
+
+    return json.dumps(courses)
+
+@app.route("/admin1", methods=['POST'])
+def adminAccess():
+    
+    buildinput = request.form['buildinput'];
+    nameinput = request.form['nameinput'];
+    latinput = request.form['latinput'];
+    longinput = request.form['longinput'];
+    flag = request.form['flag']
+
+    SQL = ''
+
+    if(flag == '0'):
+      cursor.execute("INSERT INTO buildings (building, buildingname, latitude, longitude) VALUES ('" + buildinput + "','" + nameinput + "','" + latinput + "','" + longinput + "');")
+
+    elif(flag == '1'):
+      cursor.execute("DELETE FROM buildings WHERE building = '" + buildinput + "';")
+
+    else:
+      cursor.execute("UPDATE buildings SET building = '" + buildinput + "', buildingname = '" + nameinput + "', latitude = '" + latinput + "', longitude = '" + longinput + "' WHERE building = '" + buildinput + "';")
+    
+    #cursor.execute(SQL)
+    conn.commit()
+
+    return jsonify("")
+      
+@app.route("/admin")
+def admin():
+   return render_template('admin.html')
+
+@app.route("/getCourses")
+def getCourseList():  
+  
+  term = request.args['term'];
+
+  SQL = "SELECT crn, title, subjnbr FROM sections WHERE subjnbr LIKE '%%" + term + "%%' or title LIKE '%%" + term + "%%' or crn LIKE '%%" + term + "%%' ;"
+  data = (term, )
+
+  cursor.execute(SQL)
+  rows = [x for x in cursor]
+  cols = [x[0] for x in cursor.description]
+  courses = []
+  for row in rows:
+    course = {}
+    for prop, val in zip(cols, row):
+      course[prop] = val
+      courses.append(course)
+
+  return json.dumps(courses)
+
+@app.route("/getCoursesWithDays")
+def getCourseListWithDays():  
+  
+  term = request.args['term'];
+
+  SQL = "SELECT m, t, w, h, f, begintime, endtime, crn, subjnbr, title, latitude, longitude FROM sections, buildings WHERE crn = '" + term + "' AND sections.building = buildings.building;"
+
+  cursor.execute(SQL)
+  rows = [x for x in cursor]
+  cols = [x[0] for x in cursor.description]
+  courses = []
+  for row in rows:
+    course = {}
+    for prop, val in zip(cols, row):
+      if type(val) is datetime.datetime or type(val) is datetime.time:
+        course[prop] = val.isoformat()
+        continue
+      else:
+        course[prop] = val
+        courses.append(course)
+
+  return json.dumps(courses)
 
 # launch
 if __name__ == "__main__":
