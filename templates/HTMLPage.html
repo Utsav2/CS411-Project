@@ -31,12 +31,22 @@
                 <ul id = "classResults">
                 </ul>
                 <div class="list-group" style="margin-top: 25px" role="tablist">
-                  <a href ="#HTMLPage.html" class="list-group-item" onclick = "renderMap('m')">Monday</a>
-                  <a href ="#HTMLPage.html" class="list-group-item" onclick = "renderMap('t')">Tuesday</a>
-                  <a href ="#HTMLPage.html" class="list-group-item" onclick = "renderMap('w')">Wednesday</a>
-                  <a href ="#HTMLPage.html" class="list-group-item" onclick = "renderMap('r')">Thursday</a>
-                  <a href ="#HTMLPage.html" class="list-group-item" onclick = "renderMap('f')">Friday</a>
-                </div>
+                  <a href ="#" class="list-group-item" onclick = "renderMap('m')" data-toggle="collapse" data-target="#m-list">Monday</a>
+                    <div id="m-list" class="collapse">
+                    </div>
+                  <a href ="#" class="list-group-item" onclick = "renderMap('t')" data-toggle="collapse" data-target="#t-list">Tuesday</a>
+                    <div id="t-list" class="collapse">
+                    </div>
+                  <a href ="#" class="list-group-item" onclick = "renderMap('w')" data-toggle="collapse" data-target="#w-list">Wednesday</a>
+                    <div id="w-list" class="collapse">
+                    </div>
+                  <a href ="#" class="list-group-item" onclick = "renderMap('r')" data-toggle="collapse" data-target="#r-list">Thursday</a>
+                    <div id="r-list" class="collapse">
+                    </div>
+                  <a href ="#" class="list-group-item" onclick = "renderMap('f')" data-toggle="collapse" data-target="#f-list">Friday</a>
+                    <div id="f-list" class="collapse">
+                    </div>
+                </div>                
             </div>
         </div>
         <script src="{{url_for('static', filename='jquery-1.11.0.js')}}"></script>
