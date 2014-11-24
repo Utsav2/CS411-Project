@@ -26,20 +26,18 @@ def restaurantSearch():
     searchTerm = request.args.get('hours')
     flag = 2
     if searchTerm is None:
-      searchTerm = request.args.get('cuisine') 
-      flag = 3
+      return jsonify("")
+
+  searchTerm = searchTerm.upper()
 
   if flag is 1:
-    SQL = "SELECT * FROM restaurantNames WHERE name LIKE '%%"+ searchTerm +"%%';"
+    SQL = "SELECT DISTINCT * FROM restaurantNames WHERE name ILIKE '%%"+ searchTerm +"%%' OR cuisine ILIKE '%%" + searchTerm + "%%';"
   if flag is 2:
     #TODO: LONG ASS SQL COMMAND
-    SQL = "SELECT * FROM restaurantHours WHERE mopen > searchTerm > mclose or topen > searchTerm > tclose or wopen > searchTerm > wclose or hopen > searchTerm > hclose or fopen > searchTerm > fclose or sopen > searchTerm > sclose or upoen > searchTerm > uclose;"
-  if flag is 3:
-    SQL = "SELECT * FROM restaurantCuisine WHERE cuisine LIKE '%%" + cuisine + "%%';" 
-
+    SQL = "SELECT DISTINCT * FROM restaurantHours WHERE mopen > searchTerm > mclose or topen > searchTerm > tclose or wopen > searchTerm > wclose or hopen > searchTerm > hclose or fopen > searchTerm > fclose or sopen > searchTerm > sclose or upoen > searchTerm > uclose;"
   cursor.execute(SQL)
   rows = [x for x in cursor]
-  cols = [x[0] for x in curosr.description]
+  cols = [x[0] for x in cursor.description]
   courses = []   
   for row in rows:
     course = {}
@@ -99,7 +97,7 @@ def admin():
 @app.route("/getCourses")
 def getCourseList():
   term = request.args['term'].upper()
-  SQL = "SELECT DISTINCT crn, title, subjnbr FROM sections WHERE subjnbr LIKE '%%" + term + "%%' or title LIKE '%%" + term + "%%' or crn LIKE '%%" + term + "%%' ;"
+  SQL = "SELECT DISTINCT title, subjnbr, begintime, endtime, m, t, w, h, f, crn FROM sections WHERE subjnbr LIKE '%%" + term + "%%' or title LIKE '%%" + term + "%%' or crn LIKE '%%" + term + "%%' ;"
   data = (term, )
 
   cursor.execute(SQL)
@@ -109,12 +107,16 @@ def getCourseList():
   for row in rows:
     course = {}
     for prop, val in zip(cols, row):
-      course[prop] = val
-      courses.append(course)
+      if type(val) is datetime.datetime or type(val) is datetime.time:
+        course[prop] = val.isoformat()
+        continue
+      else:
+        course[prop] = val
+        courses.append(course)
 
   return json.dumps(courses)
 
-@app.route("/getCoursesWithDays")
+@app.route("/getCoursesWithDetails")
 def getCourseListWithDays():  
   
   term = request.args['term'];
@@ -137,11 +139,6 @@ def getCourseListWithDays():
 
   return json.dumps(courses)
 
-@app.route("/directions")
-def directions():
-    url = "http://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal"
-    r = requests.get(url)
-    return  jsonify(r.json())
 # launch
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

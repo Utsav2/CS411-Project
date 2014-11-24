@@ -5,48 +5,65 @@
        
         <meta charset="utf-8" />
         <title></title>
-        <link href="{{url_for('static', filename='bootstrap.css')}}" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
     </head>
     <body>
-        <nav class="navbar navbar-default" role="navigation" style="margin-bottom: 0px; height: 80px">
-            <div class="container" style="height: 80px">
+        <nav class="navbar navbar-default" role="navigation">
+            <div style="height: 60px">
             <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header" style="height: 80px">
-                    <a class="navbar-brand" href="#"><img src="{{url_for('static', filename='Image003.png')}}" style="max-height: 100%; width:  100px" alt="logo"></a>
+                <div class="navbar-header padding-left" style="height: 60px">
+                    <ul class="list-inline">
+                        <li href ="#" class="list-group-item" onclick = "renderMap('m')" data-toggle="pill" id="m-list" >Monday</li>
+                        <li href ="#" class="list-group-item" onclick = "renderMap('t')" data-toggle="pill" id="t-list">Tuesday</li>
+                        <li href ="#" class="list-group-item" onclick = "renderMap('w')" data-toggle="pill" id="w-list">Wednesday</li>
+                        <li href ="#" class="list-group-item" onclick = "renderMap('r')" data-toggle="pill" id="r-list">Thursday</li>
+                        <li href ="#" class="list-group-item" onclick = "renderMap('f')" data-toggle="pill" id="f-list">Friday</li>
+                    </ul>
                 </div>
-                <ul class="nav navbar-nav navbar-right" style="font-family: GrassHopper; height: 79px">
-                    <li><a href="#" style="text-align: center;height: 79px;min-height: 10em;display: table-cell;vertical-align: middle; font-size: 28px"><b>About</b></a></li>
-                </ul>
             </div>
         </nav>
-        <div id="map-canvas"></div>
-        <div class="col-lg-3 pull-right" style="padding-right: 0px">
-            <div class="well" style="margin-bottom: 0px">
-                <form class="center-block" role="search">
-                    <div class="form-group">
-                        <input type="text" id = "search" class="form-control" placeholder="Search">
+        <div class= "container-fluid">
+            <div class = "col-md-7 map" id = "map-canvas">
+            </div>
+            <div class = "col-md-7 map" style="visibility:hidden;">
+            </div>
+        </div>  
+        <div class="container-fluid">
+            <div class = "row">
+                <!--ul class="list-group col-md-2 pull-right padding-right" role="tablist">
+                      <a href ="#" class="list-group-item" onclick = "renderMap('m')" data-toggle="collapse" data-target="#m-list">Monday</a>
+                        <div id="m-list" class="collapse">
+                        </div>
+                      <a href ="#" class="list-group-item" onclick = "renderMap('t')" data-toggle="collapse" data-target="#t-list">Tuesday</a>
+                        <div id="t-list" class="collapse">
+                        </div>
+                      <a href ="#" class="list-group-item" onclick = "renderMap('w')" data-toggle="collapse" data-target="#w-list">Wednesday</a>
+                        <div id="w-list" class="collapse">
+                        </div>
+                      <a href ="#" class="list-group-item" onclick = "renderMap('r')" data-toggle="collapse" data-target="#r-list">Thursday</a>
+                        <div id="r-list" class="collapse">
+                        </div>
+                      <a href ="#" class="list-group-item" onclick = "renderMap('f')" data-toggle="collapse" data-target="#f-list">Friday</a>
+                        <div id="f-list" class="collapse">
+                        </div>
+                </ul--> 
+                <div class="col-md-2 pull-right padding-right">
+                    <form role="search">
+                        <input type="text" id = "search" class="form-control" placeholder="Search courses">
+                    </form>
+                    <div id = "extras">
+
                     </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                </form>
-                <ul id = "classResults">
-                </ul>
-                <div class="list-group" style="margin-top: 25px" role="tablist">
-                  <a href ="#" class="list-group-item" onclick = "renderMap('m')" data-toggle="collapse" data-target="#m-list">Monday</a>
-                    <div id="m-list" class="collapse">
+                </div>
+                <div class="col-md-2 pull-right padding-right">
+                    <form role="search">
+                        <input type="text" id = "restaurant_search" class="form-control" placeholder="Search restaurants">
+                    </form>
+                    <div id = "extras">
+
                     </div>
-                  <a href ="#" class="list-group-item" onclick = "renderMap('t')" data-toggle="collapse" data-target="#t-list">Tuesday</a>
-                    <div id="t-list" class="collapse">
-                    </div>
-                  <a href ="#" class="list-group-item" onclick = "renderMap('w')" data-toggle="collapse" data-target="#w-list">Wednesday</a>
-                    <div id="w-list" class="collapse">
-                    </div>
-                  <a href ="#" class="list-group-item" onclick = "renderMap('r')" data-toggle="collapse" data-target="#r-list">Thursday</a>
-                    <div id="r-list" class="collapse">
-                    </div>
-                  <a href ="#" class="list-group-item" onclick = "renderMap('f')" data-toggle="collapse" data-target="#f-list">Friday</a>
-                    <div id="f-list" class="collapse">
-                    </div>
-                </div>                
+                </div>  
             </div>
         </div>
         <script src="{{url_for('static', filename='jquery-1.11.0.js')}}"></script>
@@ -61,6 +78,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-route.js"></script>
         <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+        <script src="{{url_for('static', filename='moment.min.js')}}"></script>
         <script src="{{url_for('static', filename='app.js')}}"></script>
 
 </html>
