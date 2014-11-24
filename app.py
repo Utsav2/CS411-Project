@@ -18,6 +18,37 @@ cursor = conn.cursor()
 def hello():
     return render_template('HTMLPage.html')
 
+@app.route("/searchRestaurant", methods=['GET'])
+def restaurantSearch():
+  flag = 1
+  searchTerm = request.args.get('name')
+  if searchTerm is None:
+    searchTerm = request.args.get('hours')
+    flag = 2
+    if searchTerm is None:
+      searchTerm = request.args.get('cuisine') 
+      flag = 3
+
+  if flag is 1:
+    SQL = "SELECT * FROM restaurantNames WHERE name LIKE '%%"+ searchTerm +"%%';"
+  if flag is 2:
+    #TODO: LONG ASS SQL COMMAND
+    SQL = "SELECT * FROM restaurantHours WHERE mopen > searchTerm > mclose or topen > searchTerm > tclose or wopen > searchTerm > wclose or hopen > searchTerm > hclose or fopen > searchTerm > fclose or sopen > searchTerm > sclose or upoen > searchTerm > uclose;"
+  if flag is 3:
+    SQL = "SELECT * FROM restaurantCuisine WHERE cuisine LIKE '%%" + cuisine + "%%';" 
+
+  cursor.execute(SQL)
+  rows = [x for x in cursor]
+  cols = [x[0] for x in curosr.description]
+  courses = []   
+  for row in rows:
+    course = {}
+    for prop, val in zip(cols, row):
+      course[prop] = val
+      courses.append(course)
+
+  return json.dumps(courses)
+
 @app.route("/searchBuildings", methods=['GET'])
 def adminBuildSearch():
   
