@@ -77,9 +77,7 @@ function guessLectureOrDiscussionAndPrintDays(data){
 	string = string.substring(0, string.length-1) + ')';
 	return string;
 }
-
 function makeAutocompletePretty(data){
-
 	return regexify_search(data.subjnbr, true) + ': ' + data.title + ' ' + getPrettyTimings(data.begintime)
 			+  ' ' + guessLectureOrDiscussionAndPrintDays(data);
 }
@@ -113,7 +111,6 @@ $( "#restaurant_search" ).autocomplete({
 
 $( "#search" ).autocomplete({
 	source: function (request, response) {
-
 		request.term = regexify_search(request.term, false);
 	  	$.getJSON("/getCourses?term=" + request.term, function (data) {
 	      r = [];
@@ -225,11 +222,9 @@ function putOnMap(data){
 	$.getJSON("/getCoursesWithDetails?term=" + data.item.id, function(result){
 
 			if(checkForTimeConflict(result[0])){
-
 				alert("Time Conflict! With " + currentlyConflictingCourse + " on " + currentlyConflictingDetailString);
 				return;
 			}
-
 			var flag = 1;
 			if(result[0].m != null){
 				days['m'].push(result[0]);
@@ -269,7 +264,6 @@ function putOnMap(data){
 			renderMap(currently_rendered);
 			setCurrentlyRendered(currently_rendered);
 	});
-
 }
 function clearCourses(){
 	$('#extras').empty();
@@ -358,11 +352,11 @@ function calcRoute(day) {
 		waypoints:waypoints,
 		travelMode: google.maps.TravelMode.WALKING
 	};
-	/*directionsService.route(request, function(result, status) {
+	directionsService.route(request, function(result, status) {
 		if (status == google.maps.DirectionsStatus.OK) {
 			directionsDisplay.setDirections(result);
 		}
-	}); */
+	}); 
 }
 
 $('.list-group-item').on('click',function(e){

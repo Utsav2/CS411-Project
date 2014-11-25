@@ -33,7 +33,6 @@ def restaurantSearch():
   if flag is 1:
     SQL = "SELECT DISTINCT * FROM restaurantNames WHERE name ILIKE '%%"+ searchTerm +"%%' OR cuisine ILIKE '%%" + searchTerm + "%%';"
   if flag is 2:
-    #TODO: LONG ASS SQL COMMAND
     SQL = "SELECT DISTINCT * FROM restaurantHours WHERE mopen > searchTerm > mclose or topen > searchTerm > tclose or wopen > searchTerm > wclose or hopen > searchTerm > hclose or fopen > searchTerm > fclose or sopen > searchTerm > sclose or upoen > searchTerm > uclose;"
   cursor.execute(SQL)
   rows = [x for x in cursor]
@@ -52,7 +51,6 @@ def adminBuildSearch():
   
     searchBuild = request.args['building'];
     SQL = "SELECT * FROM buildings WHERE building LIKE '%%" + searchBuild + "%%' or buildingname LIKE '%%" + searchBuild + "%%' or latitude LIKE '%%" + searchBuild + "%%' or longitude LIKE '%%" + searchBuild + "%%';"
-    
     cursor.execute(SQL)
     rows = [x for x in cursor]
     cols = [x[0] for x in cursor.description]
