@@ -47,7 +47,8 @@ body{
 .course {
 
 	box-shadow: 10px 10px 5px #888888;
-	margin-top: 5%;
+	margin-bottom: 5%;
+	margin-left: 2%;
 	background-color: #c0c9c0;
 	opacity: 0.9;
 	text-align: center;
@@ -63,5 +64,5 @@ body{
 .ui-autocomplete{
 
 	font-family: 'Lato', sans-serif;
-	width:16%;
+	width:10%;
 }
