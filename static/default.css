@@ -44,7 +44,7 @@ body{
 	width: 200px;
 }
 
-.course {
+.card {
 
 	box-shadow: 10px 10px 5px #888888;
 	margin-bottom: 5%;
@@ -65,4 +65,25 @@ body{
 
 	font-family: 'Lato', sans-serif;
 	width:10%;
+}
+
+.example{
+
+
+	color:black;
+}
+
+#close {
+    float:right;
+    display:inline-block;
+    padding:2px 5px;
+    opacity: 0.9;
+    cursor:pointer;
+}
+
+#close:hover {
+    float:right;
+    display:inline-block;
+    padding:2px 5px;
+    color:#fff;
 }

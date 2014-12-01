@@ -7,6 +7,8 @@ days['w'] = [];
 days['r'] = [];
 days['f'] = [];
 
+currentCrn = 1;
+
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 
@@ -83,7 +85,36 @@ function makeAutocompletePretty(data){
 }
 
 function parseRest(data){
-	return data.name;
+	return data.name + " (" + data.cuisine + ") ";
+}
+
+function calculateRestarauntTime(tuple, day, begin){
+
+	if(days[day].length == 0){
+		if(begin)
+			return "12:00:00";
+		else
+			return "13:00:00";
+	}	
+	for(var i = 0; i < days[day].length - 1; i++){
+		console.log("hi")
+		var tuple = (days[day])[i];
+		var end =  moment(tuple.endtime, "HH:mm:ss");
+		var beginning =  moment(((days[day])[i+1]).begintime, "HH:mm:ss");
+		if(beginning.diff(end, 'hours') >= 1){
+			if(begin)
+				return end.add(10, 'minutes').format("HH:mm:ss");
+			else
+				return end.add(70, 'minutes').format("HH:mm:ss");
+		}
+	}
+
+	var tuple = (days[day])[days[day].length-1];
+
+	if(begin)
+		return moment(tuple.endtime, "HH:mm:ss").add(10, 'minutes').format("HH:mm:ss");
+	else
+		return moment(tuple.endtime, "HH:mm:ss").add(70, 'minutes').format("HH:mm:ss");
 }
 
 $( "#restaurant_search" ).autocomplete({
@@ -95,8 +126,17 @@ $( "#restaurant_search" ).autocomplete({
 			for(var i in data){
 				if(!(data[i].name in duplicates)){
 					r[count] = {
-						label: parseRest(data[i]),
-						value: parseRest(data[i])
+			            label: parseRest(data[i]),
+			            value: "",
+			            id: "",
+			            title: data[i].cuisine,
+			            subjnbr: data[i].name,
+			            begintime: calculateRestarauntTime(data[i], currently_rendered, true),
+			            endtime: calculateRestarauntTime(data[i], currently_rendered, false),
+			            latitude: data[i].latitude,
+			            longitude: data[i].longitude,
+			            type:"restaurant",
+			            crn: currentCrn++
 					}
 					count++;
 					duplicates[data[i].name] = "1";
@@ -106,7 +146,14 @@ $( "#restaurant_search" ).autocomplete({
 		});
 	},
 	minLength: 2,
-	delay:100
+	delay:100,
+	select: function( event, ui ) {
+		if(checkForTimeConflict(ui.item, true)){
+			alert("Time Conflict!" + " " + currentlyConflictingDetailString);
+			return;
+		}
+		putRestaurantOnMap(ui.item);
+	}
 });
 
 $( "#search" ).autocomplete({
@@ -118,23 +165,26 @@ $( "#search" ).autocomplete({
 	      var count = 0;
 	      for(var i in data){
 	        if(!(data[i].crn in duplicates)){
-	          r[count] = {
-	            label: makeAutocompletePretty(data[i]),
-	            value: makeAutocompletePretty(data[i]),
-	            id: data[i].crn,
-	            title: data[i].title,
-	            subjnbr: data[i].subjnbr,
-	            begintime: data[i].begintime,
-	            endtime: data[i].endtime,
-	            m: data[i].m,
-	            t: data[i].t,
-	            w: data[i].w,
-	            h: data[i].h,
-	            f: data[i].f,
-	            crn: data[i].crn
-	          }
-	          duplicates[data[i].crn] = "1"
-	          count++;
+
+		        r[count] = {
+		            label: makeAutocompletePretty(data[i]),
+		            value: "",
+		            id: data[i].crn,
+		            title: data[i].title,
+		            subjnbr: data[i].subjnbr,
+		            begintime: data[i].begintime,
+		            endtime: data[i].endtime,
+		            m: data[i].m,
+		            t: data[i].t,
+		            w: data[i].w,
+		            h: data[i].h,
+		            f: data[i].f,
+		            type:"course",
+		            crn: data[i].crn
+		          }
+		        duplicates[data[i].crn] = "1"
+		        count++;
+
 	        }
 	      }
 	      response(r);
@@ -146,6 +196,13 @@ $( "#search" ).autocomplete({
 		putOnMap(ui);
 	}
 });
+
+function putRestaurantOnMap(data){
+
+	days[currently_rendered].push(data);
+	renderMap(currently_rendered);
+	setCurrentlyRendered(currently_rendered);
+}
 
 function getLongFormDay(day){
 
@@ -179,15 +236,19 @@ function checkConflictFor(day, data){
 		var begintime = moment((days[day])[0].begintime, "HH:mm:ss");
 		var endtime = moment((days[day])[0].endtime, "HH:mm:ss");
 		if(begin.isBefore(endtime) && end.isAfter(begintime)){
-			currentlyConflictingCourse = (days[day])[0].title;
-			currentlyConflictingDetailString = getLongFormDay(day);
+			currentlyConflictingDetailString = (days[day])[0].title + " on " + getLongFormDay(day);
 			return true;
 		}
 	}
 	return false;
 }
-function checkForTimeConflict(data){
+function checkForTimeConflict(data, restaurant){
 
+	if(restaurant){
+		if(checkConflictFor(currently_rendered, data))
+			return true;
+		return false;
+	}
 	if(data.m != null){
 		if(checkConflictFor('m', data))
 			return true;
@@ -217,66 +278,96 @@ function setCurrentlyRendered(day){
 	previous.removeClass('active');
 	$('#' + day + '-list').addClass('active');
 }
+
+function recalcRestaurants(day){
+
+	for(var i = 0 ; i < days[day].length; i++){
+		tuple = (days[day])[i];
+		if(tuple.type === "restaurant"){
+			days[day].splice(i, 1);	
+			tuple.begintime = calculateRestarauntTime(tuple, currently_rendered, true);	
+			tuple.endtime = calculateRestarauntTime(tuple, currently_rendered, true);	
+			days[day].push(tuple);
+		}
+	}
+
+}
 function putOnMap(data){
 
 	$.getJSON("/getCoursesWithDetails?term=" + data.item.id, function(result){
 
-			if(checkForTimeConflict(result[0])){
-				alert("Time Conflict! With " + currentlyConflictingCourse + " on " + currentlyConflictingDetailString);
+			if(checkForTimeConflict(result[0], false)){
+				alert("Time Conflict! " + currentlyConflictingDetailString);
 				return;
 			}
-			var flag = 1;
-			if(result[0].m != null){
-				days['m'].push(result[0]);
-				flag *= 2 ;
-			}
-			if(result[0].t != null){
-				days['t'].push(result[0]);
-				flag *= 3;
-			}
-			if(result[0].w != null){
-				days['w'].push(result[0]);
-				flag *= 7;
+
+			if(result[0].f != null){
+				days['f'].push(result[0]);
+				currently_rendered = 'f';
 			}
 			if(result[0].h != null){
 				days['r'].push(result[0]);
-				flag *= 11;
+				currently_rendered = 'r';
 			}
-			if(result[0].f != null){
-				days['f'].push(result[0]);
-				flag *= 13;
+			if(result[0].w != null){
+				days['w'].push(result[0]);
+				currently_rendered = 'w';
 			}
-			for(var i = 2; i <= 13; i++){
-				if(flag % i == 0){
-					if(i == 2)
-						currently_rendered = 'm';
-					if(i == 3)
-						currently_rendered = 't';
-					if(i == 7)
-						currently_rendered = 'w';
-					if(i == 11)
-						currently_rendered = 'r';
-					if(i == 13)
-						currently_rendered = 'f';
-					break;
-				}
+			if(result[0].t != null){
+				days['t'].push(result[0]);
+				currently_rendered = 't';
 			}
+			if(result[0].m != null){
+				days['m'].push(result[0]);
+				currently_rendered = 'm' ;
+			}
+
+			recalcRestaurants(currently_rendered);
 			renderMap(currently_rendered);
 			setCurrentlyRendered(currently_rendered);
 	});
 }
 function clearCourses(){
 	$('#extras').empty();
-	//$('#' + day + '-list').empty();
 }
 
-function getContentString(tuple, css){
+function deleteCourseWithCrn(crn, day){
 
-	return content_string = '<div class = "' + css + '"><h3>' + tuple.subjnbr + '</h3>' + 
+	for (var i in days[day]){
+		if((days[day])[i].crn == crn){
+			days[day].splice(i, 1);
+			return day;
+		}
+	}
+	return 0;
+}
+
+function closeCard(id){
+
+	var day;
+
+	day = deleteCourseWithCrn(id, 'f');
+	day = deleteCourseWithCrn(id, 'r');
+	day = deleteCourseWithCrn(id, 'w');
+	day = deleteCourseWithCrn(id, 't');
+	day = deleteCourseWithCrn(id, 'm');
+
+	renderMap(day);	
+}
+
+function getContentString(tuple, css, close, day){
+
+	var string = '<div id = "' + day + tuple.crn + '" class = "' + css + '">';
+
+	if(close)
+		string += "<span id='close' onclick='closeCard(" + tuple.crn + ")'>x</span>";
+
+	string += '<h3>' + tuple.subjnbr + '</h3>' + 
 							 '<p>' + tuple.title + 
 							 '<p><span>' + getPrettyTimings(tuple.begintime) +  
 							 ' - ' + getPrettyTimings(tuple.endtime) + '</span></div>';
 
+	return string;
 }
 
 function compareTimes(a, b){
@@ -284,9 +375,12 @@ function compareTimes(a, b){
 }
 
 function renderMap(day){
+
+
 	clearMarkers();
 	clearCourses();
 	for(var i in days[day]){
+
 		var tuple = (days[day])[i];
 		var location = new google.maps.LatLng(tuple.latitude, tuple.longitude);
 		var marker = new google.maps.Marker({
@@ -295,9 +389,8 @@ function renderMap(day){
 			map: map
 		});
 		var infowindow = new google.maps.InfoWindow({
-     		content: getContentString(tuple, "course-marker")
+     		content: getContentString(tuple, "course-marker", false, day)
   		});
-  		(days[day])[i].content_string = content_string;
   		add_infowindow(marker, infowindow);
   		marker.setMap(map);
 		currentMarkers.push(marker);
@@ -312,8 +405,7 @@ function renderMap(day){
 
 function appendContentStrings(days_array, day){
 	for(var i in days_array){
-		//$('#' + day + '-list').append(days_array[i].content_string);
-		$('#extras').append(getContentString(days_array[i], "course col-md-12"));
+		$('#extras').append(getContentString(days_array[i], "card col-md-12", true, day));
 	}
 }
 
