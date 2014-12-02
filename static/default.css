@@ -33,10 +33,12 @@ body{
 
 .map {
 
+	top:15%;
+	height:75%;
 	position: absolute;
-	height:80%;
 
 }
+
 
 .course-marker {
 
@@ -86,4 +88,20 @@ body{
     display:inline-block;
     padding:2px 5px;
     color:#fff;
+}
+
+.route{
+	margin-left: 2%;
+	text-align: center;
+}
+
+.ok{
+
+}
+
+.toolong{
+
+	color:red;
+	text-decoration: bold;
+
 }

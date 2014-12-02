@@ -6,6 +6,13 @@ days['t'] = [];
 days['w'] = [];
 days['r'] = [];
 days['f'] = [];
+var routes = {}
+routes['m'] = [];
+routes['t'] = [];
+routes['w'] = [];
+routes['r'] = [];
+routes['f'] = [];
+
 
 currentCrn = 1;
 
@@ -49,8 +56,13 @@ function getPrettyTimings(time){
 	if(hour == 12 && parseInt(time.substring(3, 5)) == 0) {
 		return hour + time.substring(2, 5) + " noon";
 	}
+	if(hour == 12){
+		return hour + time.substring(2, 5) + "PM";
+	}
 	return hour > 12 ? (hour - 12) + time.substring(2, 5) + "PM" : hour + time.substring(2, 5) + "AM";
 }
+
+
 
 function guessLectureOrDiscussionAndPrintDays(data){
 
@@ -88,33 +100,35 @@ function parseRest(data){
 	return data.name + " (" + data.cuisine + ") ";
 }
 
-function calculateRestarauntTime(tuple, day, begin){
+var timeTakenToEat = 60;
+
+function calculateRestarauntTime(tuple, day){
 
 	if(days[day].length == 0){
-		if(begin)
-			return "12:00:00";
-		else
-			return "13:00:00";
-	}	
+		return {
+			begin:"12:00:00",
+			end:"13:00:00"
+		}	
+	}
 	for(var i = 0; i < days[day].length - 1; i++){
-		console.log("hi")
 		var tuple = (days[day])[i];
 		var end =  moment(tuple.endtime, "HH:mm:ss");
 		var beginning =  moment(((days[day])[i+1]).begintime, "HH:mm:ss");
-		if(beginning.diff(end, 'hours') >= 1){
-			if(begin)
-				return end.add(10, 'minutes').format("HH:mm:ss");
-			else
-				return end.add(70, 'minutes').format("HH:mm:ss");
+		if(beginning.diff(end, 'minutes') > timeTakenToEat){
+			return {
+				begin:end.format("HH:mm:ss"),
+				end:end.add(timeTakenToEat, 'minutes').format("HH:mm:ss")
+			};
 		}
 	}
 
 	var tuple = (days[day])[days[day].length-1];
-
-	if(begin)
-		return moment(tuple.endtime, "HH:mm:ss").add(10, 'minutes').format("HH:mm:ss");
-	else
-		return moment(tuple.endtime, "HH:mm:ss").add(70, 'minutes').format("HH:mm:ss");
+	console.log(days[day].length-1);
+	console.log((days[day])[days[day].length-1]);
+	return {
+		begin:tuple.endtime,
+		end:moment(tuple.endtime, "HH:mm:ss").add(timeTakenToEat, 'minutes').format("HH:mm:ss")
+	};
 }
 
 $( "#restaurant_search" ).autocomplete({
@@ -131,8 +145,8 @@ $( "#restaurant_search" ).autocomplete({
 			            id: "",
 			            title: data[i].cuisine,
 			            subjnbr: data[i].name,
-			            begintime: calculateRestarauntTime(data[i], currently_rendered, true),
-			            endtime: calculateRestarauntTime(data[i], currently_rendered, false),
+			            begintime: null,
+			            endtime: null,
 			            latitude: data[i].latitude,
 			            longitude: data[i].longitude,
 			            type:"restaurant",
@@ -148,10 +162,6 @@ $( "#restaurant_search" ).autocomplete({
 	minLength: 2,
 	delay:100,
 	select: function( event, ui ) {
-		if(checkForTimeConflict(ui.item, true)){
-			alert("Time Conflict!" + " " + currentlyConflictingDetailString);
-			return;
-		}
 		putRestaurantOnMap(ui.item);
 	}
 });
@@ -197,9 +207,16 @@ $( "#search" ).autocomplete({
 	}
 });
 
+function createRestaurant(data, day){
+	var r = calculateRestarauntTime(data, day);
+	data.begintime = r.begin;
+	data.endtime = r.end;
+	days[currently_rendered].push(data);
+}
+
 function putRestaurantOnMap(data){
 
-	days[currently_rendered].push(data);
+	createRestaurant(data, currently_rendered);
 	renderMap(currently_rendered);
 	setCurrentlyRendered(currently_rendered);
 }
@@ -224,20 +241,21 @@ function getLongFormDay(day){
 var currentMarkers = [];
 current_info_windows = [];
 currently_rendered = 'm';
-var currentlyConflictingCourse;
 var currentlyConflictingDetailString;
 
 function checkConflictFor(day, data){
 
 	//Using moment.js check it out
-	var begin =  moment(data.begintime, "HH:mm:ss");
-	var end =  moment(data.endtime, "HH:mm:ss");
+	var begin =  parseInt(moment(data.begintime, "HH:mm:ss").format("X"));
+	var end =  parseInt(moment(data.endtime, "HH:mm:ss").format("X"));
 	for(var i = 0; i < days[day].length; i++){
-		var begintime = moment((days[day])[0].begintime, "HH:mm:ss");
-		var endtime = moment((days[day])[0].endtime, "HH:mm:ss");
-		if(begin.isBefore(endtime) && end.isAfter(begintime)){
-			currentlyConflictingDetailString = (days[day])[0].title + " on " + getLongFormDay(day);
-			return true;
+		var begintime = parseInt(moment((days[day])[0].begintime, "HH:mm:ss").format("X"));
+		var endtime = parseInt(moment((days[day])[0].endtime, "HH:mm:ss").format("X"));
+		for(var i = begin; i < end; i += (end-begin)/5){
+			if(i <= endtime && i >= begintime){
+				currentlyConflictingDetailString = (days[day])[0].title + " on " + getLongFormDay(day);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -281,16 +299,25 @@ function setCurrentlyRendered(day){
 
 function recalcRestaurants(day){
 
+	console.log(days[day]);
+
+	var restaurants = [];
+
 	for(var i = 0 ; i < days[day].length; i++){
 		tuple = (days[day])[i];
 		if(tuple.type === "restaurant"){
 			days[day].splice(i, 1);	
-			tuple.begintime = calculateRestarauntTime(tuple, currently_rendered, true);	
-			tuple.endtime = calculateRestarauntTime(tuple, currently_rendered, true);	
-			days[day].push(tuple);
+			restaurants.push(tuple);
 		}
 	}
-
+	for(var i in restaurants){
+		tuple = restaurants[i];
+		var r = calculateRestarauntTime(tuple, day);
+		tuple.begintime = r.begin;	
+		tuple.endtime = r.end;
+		days[day].push(tuple);
+	}
+	days[day].sort(compareTimes);
 }
 function putOnMap(data){
 
@@ -323,6 +350,7 @@ function putOnMap(data){
 			}
 
 			recalcRestaurants(currently_rendered);
+			console.log(days[currently_rendered]);			
 			renderMap(currently_rendered);
 			setCurrentlyRendered(currently_rendered);
 	});
@@ -345,14 +373,13 @@ function deleteCourseWithCrn(crn, day){
 function closeCard(id){
 
 	var day;
-
 	day = deleteCourseWithCrn(id, 'f');
 	day = deleteCourseWithCrn(id, 'r');
 	day = deleteCourseWithCrn(id, 'w');
 	day = deleteCourseWithCrn(id, 't');
 	day = deleteCourseWithCrn(id, 'm');
-
-	renderMap(day);	
+	recalcRestaurants(currently_rendered);
+	renderMap(currently_rendered);	
 }
 
 function getContentString(tuple, css, close, day){
@@ -371,16 +398,19 @@ function getContentString(tuple, css, close, day){
 }
 
 function compareTimes(a, b){
-	return parseInt(a.begintime.substring(0, 2)) > parseInt(b.begintime.substring(0, 2));
+	var one =  moment(a.begintime, "HH:mm:ss");
+	var two =  moment(b.begintime, "HH:mm:ss");
+	return one.diff(two);
+}
+function cleanup(){
+	clearMarkers();
+	clearCourses();
 }
 
 function renderMap(day){
 
-
-	clearMarkers();
-	clearCourses();
+	cleanup();
 	for(var i in days[day]){
-
 		var tuple = (days[day])[i];
 		var location = new google.maps.LatLng(tuple.latitude, tuple.longitude);
 		var marker = new google.maps.Marker({
@@ -397,15 +427,41 @@ function renderMap(day){
 		current_info_windows.push(infowindow);
 	}
 	days[day].sort(compareTimes);
-	appendContentStrings(days[day], day);
 	calcRoute(day);
 	map.panTo(location);
 	setCurrentlyRendered(day);
 }
 
-function appendContentStrings(days_array, day){
-	for(var i in days_array){
-		$('#extras').append(getContentString(days_array[i], "card col-md-12", true, day));
+function getRouteHtml(tuple, css){
+	return string = '<div class = "col-md-12 route ' + css +' ">|<p>' + tuple.text + '<br/>|</div>';
+}
+
+function getRoute(tuple, day, i){
+
+	var j = parseInt(i) + 1;
+	var css = "ok";
+	var minutes = parseInt(tuple.text.substring(0, tuple.text.indexOf(' ')));
+	var end =  moment(((days[day])[i]).endtime, "HH:mm:ss");
+	var beginning =  moment(((days[day])[j]).begintime, "HH:mm:ss");
+	if(beginning.diff(end, 'minutes') < minutes){
+		var t = (days[day])[j];
+		if(t.type === "restaurant"){
+			t.begintime = beginning.add(minutes, 'minutes').format("HH:mm:ss");
+			t.endtime = moment(t.endtime, "HH:mm:ss").add(minutes, 'minutes').format("HH:mm:ss");
+		}
+		else
+			css = "toolong";
+	}
+	return getRouteHtml(tuple, css);
+}
+
+function appendContentStrings(day){
+	var route_length = routes[day].length;
+	for(var i in days[day]){
+		$('#extras').append(getContentString((days[day])[i], "card col-md-12", true, day));
+		if(i < route_length){
+			$('#extras').append(getRoute((routes[day])[i], day, i));
+		}
 	}
 }
 
@@ -422,8 +478,24 @@ function clearMarkers(){
 	current_info_windows = [];
 }
 
+function clearRoutes(day){
+	routes[day] = [];
+}
+
+function createDurations(data, day){
+
+	for(var i in data){	
+		routes[day].push(data[i].duration);
+	}
+}
+
+var travelMode = "WALKING";
+
 function calcRoute(day) {
+
+	clearRoutes(day);
 	if(days[day].length <= 1){
+		appendContentStrings(day);
 		directionsDisplay.set('directions', null);
 		return;
 	}
@@ -442,11 +514,13 @@ function calcRoute(day) {
 		origin:origin,
 		destination:destination,
 		waypoints:waypoints,
-		travelMode: google.maps.TravelMode.WALKING
+		travelMode: google.maps.TravelMode[travelMode]
 	};
 	directionsService.route(request, function(result, status) {
 		if (status == google.maps.DirectionsStatus.OK) {
+			createDurations(result.routes[0].legs, day);
 			directionsDisplay.setDirections(result);
+			appendContentStrings(day);
 		}
 	}); 
 }
@@ -455,6 +529,14 @@ $('.list-group-item').on('click',function(e){
     var previous = $(this).closest(".list-inline").children(".active");
     previous.removeClass('active'); // previous list-item
     $(e.target).addClass('active'); // activated list-item
+});
+
+$( "#transport" ).change(function() {
+
+	cleanup();
+	travelMode = $("#transport").val();
+	calcRoute(currently_rendered);
+
 });
 
 google.maps.event.addDomListener(window, 'load', initialize);
