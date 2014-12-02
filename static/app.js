@@ -535,7 +535,8 @@ $( "#transport" ).change(function() {
 
 	cleanup();
 	travelMode = $("#transport").val();
-	calcRoute(currently_rendered);
+	recalcRestaurants(currently_rendered);
+	renderMap(currently_rendered);
 
 });
 
